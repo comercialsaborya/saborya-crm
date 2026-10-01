@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { LoginForm } from './login-form';
+import { HashSession } from './hash-session';
 
 export const metadata: Metadata = { title: 'Entrar' };
 
@@ -15,6 +16,7 @@ export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
           Seu acesso está desativado. Fale com a gestão comercial.
         </p>
       )}
+      <HashSession />
       <LoginForm next={next} />
     </>
   );
