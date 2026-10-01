@@ -45,8 +45,19 @@ export function VisitForm({
 }) {
   const [step, setStep] = React.useState(0);
   const [company, setCompany] = React.useState<string | null>(initialCompany ?? null);
-  const [contact, setContact] = React.useState<string | null>(null);
-  const [opportunity, setOpportunity] = React.useState<string | null>(initialOpportunity ?? null);
+  const onlyOne = <T extends { value: string; company_id: string }>(list: T[], c: string | null) => {
+    const l = list.filter((x) => x.company_id === c);
+    return l.length === 1 ? l[0].value : null;
+  };
+  const [contact, setContact] = React.useState<string | null>(() => onlyOne(contacts, initialCompany ?? null));
+  const [opportunity, setOpportunity] = React.useState<string | null>(
+    () => initialOpportunity ?? onlyOne(opportunities, initialCompany ?? null),
+  );
+  const selectCompany = (v: string | null) => {
+    setCompany(v);
+    setContact(onlyOne(contacts, v));
+    setOpportunity(onlyOne(opportunities, v));
+  };
   const [visitType, setVisitType] = React.useState<VisitType>('follow_up');
   const [result, setResult] = React.useState<VisitResult | null>(null);
   const [interest, setInterest] = React.useState<InterestLevel | null>(null);
@@ -62,11 +73,6 @@ export function VisitForm({
   const companyOpps = opportunities.filter((o) => o.company_id === company);
   const positive = result === 'interessado' || result === 'negociacao' || result === 'pedido_realizado';
 
-  React.useEffect(() => {
-    if (companyContacts.length === 1) setContact(companyContacts[0].value);
-    if (companyOpps.length === 1 && !initialOpportunity) setOpportunity(companyOpps[0].value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [company]);
 
   const captureLocation = React.useCallback(() => {
     if (!('geolocation' in navigator)) {
@@ -149,7 +155,7 @@ export function VisitForm({
       {/* Etapa 1 */}
       <section className={cn('space-y-4', step !== 0 && 'hidden')}>
         <Field label="Cliente visitado" required error={errors.company_id}>
-          <Picker name="company_id" title="Cliente visitado" options={companies} value={company} onChange={(v) => { setCompany(v); setContact(null); setOpportunity(null); }} placeholder="Buscar cliente" allowClear={false} />
+          <Picker name="company_id" title="Cliente visitado" options={companies} value={company} onChange={selectCompany} placeholder="Buscar cliente" allowClear={false} />
         </Field>
         {company && (
           <Field label="Com quem falou?">

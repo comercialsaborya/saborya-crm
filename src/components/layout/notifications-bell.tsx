@@ -12,33 +12,35 @@ export function NotificationsBell({ userId }: { userId: string }) {
   const [items, setItems] = React.useState<NotificationRow[]>([]);
   const unread = items.filter((n) => !n.read_at).length;
 
-  const load = React.useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
+  const load = React.useCallback(() => {
+    void createClient()
       .from('notifications')
       .select('id, title, body, link, read_at, created_at')
       .order('created_at', { ascending: false })
-      .limit(15);
-    setItems((data as NotificationRow[]) ?? []);
+      .limit(15)
+      .then(({ data }: { data: unknown }) => setItems((data as NotificationRow[]) ?? []));
   }, []);
 
   React.useEffect(() => {
-    void load();
     const supabase = createClient();
+    const first = setTimeout(load, 0);
     const ch = supabase
       .channel(`notif-${userId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, () =>
-        void load(),
+        load(),
       )
       .subscribe();
-    return () => void supabase.removeChannel(ch);
+    return () => {
+      clearTimeout(first);
+      void supabase.removeChannel(ch);
+    };
   }, [load, userId]);
 
   const markAll = async () => {
     if (!unread) return;
     const supabase = createClient();
     await supabase.from('notifications').update({ read_at: new Date().toISOString() }).is('read_at', null);
-    void load();
+    load();
   };
 
   return (

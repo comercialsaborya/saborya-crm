@@ -32,7 +32,9 @@ export function useFormAction(
   const router = useRouter();
   const last = useRef<number | undefined>(undefined);
   const opts = useRef(options);
-  opts.current = options;
+  useEffect(() => {
+    opts.current = options;
+  });
 
   useEffect(() => {
     if (!state.at || state.at === last.current) return;

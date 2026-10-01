@@ -13,7 +13,11 @@ import { cn } from '@/lib/utils';
 export function StatusSelector({ companyId, value }: { companyId: string; value: Temperature }) {
   const [current, setCurrent] = React.useState(value);
   const [pending, start] = React.useTransition();
-  React.useEffect(() => setCurrent(value), [value]);
+  const [source, setSource] = React.useState(value);
+  if (source !== value) {
+    setSource(value);
+    setCurrent(value);
+  }
 
   const choose = (t: Temperature) => {
     if (t === current) return;

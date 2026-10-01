@@ -19,10 +19,12 @@ export function AppShell({ user, brandColor, children }: { user: ShellUser; bran
   const [drawer, setDrawer] = React.useState(false);
   const [quick, setQuick] = React.useState(false);
 
-  React.useEffect(() => {
+  const [lastPath, setLastPath] = React.useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setDrawer(false);
     setQuick(false);
-  }, [pathname]);
+  }
 
   return (
     <div className="min-h-dvh" style={{ ['--brand' as string]: brandColor }}>

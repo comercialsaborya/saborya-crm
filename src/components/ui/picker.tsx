@@ -65,11 +65,11 @@ export function Picker({
         id={id}
         type="button"
         disabled={disabled}
-        aria-invalid={invalid || undefined}
+        data-invalid={invalid || undefined}
         onClick={() => setOpen(true)}
         className={cn(
           'flex h-11 w-full items-center justify-between gap-2 rounded-lg bg-surface px-3 text-left text-base ring-1 ring-inset ring-line-strong sm:h-10 sm:text-sm',
-          'focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-60 aria-[invalid=true]:ring-red-500',
+          'focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-60 data-[invalid=true]:ring-red-500',
         )}
       >
         <span className={cn('truncate', !selected && 'text-muted/80')}>{selected?.label ?? placeholder}</span>

@@ -49,7 +49,7 @@ export function FilterBar({ fields, className }: { fields: FilterField[]; classN
   return (
     <div className={cn('mb-4 space-y-2', className)}>
       <div className="flex gap-2">
-        {search && <SearchInput name={search.name} placeholder={search.placeholder} value={params.get(search.name) ?? ''} onChange={(v) => setParams({ [search.name]: v })} />}
+        {search && <SearchInput key={params.get(search.name) ?? ''} name={search.name} placeholder={search.placeholder} value={params.get(search.name) ?? ''} onChange={(v) => setParams({ [search.name]: v })} />}
         {others.length > 0 && (
           <button
             type="button"
@@ -128,7 +128,7 @@ export function FilterBar({ fields, className }: { fields: FilterField[]; classN
               );
             }
             return (
-              <TextFilter key={f.name} label={f.label} value={params.get(f.name) ?? ''} onChange={(v) => setParams({ [f.name]: v })} />
+              <TextFilter key={`${f.name}:${params.get(f.name) ?? ''}`} label={f.label} value={params.get(f.name) ?? ''} onChange={(v) => setParams({ [f.name]: v })} />
             );
           })}
           {activeCount > 0 && (
@@ -149,7 +149,6 @@ export function FilterBar({ fields, className }: { fields: FilterField[]; classN
 function SearchInput({ value, onChange, placeholder }: { name: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
   const [v, setV] = React.useState(value);
   const first = React.useRef(true);
-  React.useEffect(() => setV(value), [value]);
   React.useEffect(() => {
     if (first.current) {
       first.current = false;
@@ -177,7 +176,6 @@ function SearchInput({ value, onChange, placeholder }: { name: string; value: st
 
 function TextFilter({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const [v, setV] = React.useState(value);
-  React.useEffect(() => setV(value), [value]);
   return (
     <input
       value={v}

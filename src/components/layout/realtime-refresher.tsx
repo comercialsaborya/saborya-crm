@@ -15,7 +15,9 @@ export function RealtimeRefresher({ userId, isAdmin }: { userId: string; isAdmin
   const router = useRouter();
   const pathname = usePathname();
   const pathRef = useRef(pathname);
-  pathRef.current = pathname;
+  useEffect(() => {
+    pathRef.current = pathname;
+  }, [pathname]);
 
   useEffect(() => {
     const supabase = createClient();

@@ -35,7 +35,12 @@ export function PipelineBoard({
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const firstOpen = stages.find((s) => items.some((o) => o.stage_key === s.key && !s.is_won && !s.is_lost))?.key ?? stages[0]?.key;
   const [mobileStage, setMobileStage] = React.useState<string>(firstOpen);
-  React.useEffect(() => setItems(opportunities), [opportunities]);
+  // Sincroniza quando o servidor envia dados novos (tempo real / filtros).
+  const [source, setSource] = React.useState(opportunities);
+  if (source !== opportunities) {
+    setSource(opportunities);
+    setItems(opportunities);
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
