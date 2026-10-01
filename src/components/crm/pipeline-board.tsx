@@ -141,7 +141,7 @@ export function PipelineBoard({
       </div>
 
       {/* Desktop/tablet: Kanban */}
-      <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
+      <DndContext id="pipeline-dnd" sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
         <div className="scrollbar-thin -mx-4 hidden gap-3 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 md:flex lg:-mx-8 lg:px-8">
           {stages.map((s) => (
             <Column key={s.key} stage={s} list={byStage(s.key)} showOwner={showOwner} />

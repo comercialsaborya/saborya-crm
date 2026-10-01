@@ -3,12 +3,7 @@ import { onlyDigits } from './utils';
 export const APP_TIMEZONE = 'America/Sao_Paulo';
 
 const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-const brlCompact = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL',
-  notation: 'compact',
-  maximumFractionDigits: 1,
-});
+const oneDecimal = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
 const integer = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
 const decimal = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
 
@@ -16,7 +11,14 @@ type Num = number | string | null | undefined;
 const toNumber = (v: Num) => (v === null || v === undefined || v === '' ? 0 : Number(v));
 
 export const formatBRL = (v: Num) => brl.format(toNumber(v));
-export const formatBRLCompact = (v: Num) => (Math.abs(toNumber(v)) < 10000 ? brl.format(toNumber(v)) : brlCompact.format(toNumber(v)));
+/** "R$ 42 mil", "R$ 1,2 mi" — formatação própria (o "compact" do Intl varia entre Node e navegadores). */
+export function formatBRLCompact(v: Num): string {
+  const n = toNumber(v);
+  const a = Math.abs(n);
+  if (a < 10000) return brl.format(n);
+  if (a < 1_000_000) return `R$\u00a0${oneDecimal.format(n / 1000)}\u00a0mil`;
+  return `R$\u00a0${oneDecimal.format(n / 1_000_000)}\u00a0mi`;
+}
 export const formatInt = (v: Num) => integer.format(toNumber(v));
 export const formatNumber = (v: Num) => decimal.format(toNumber(v));
 export const formatPercent = (v: Num, digits = 1) =>
