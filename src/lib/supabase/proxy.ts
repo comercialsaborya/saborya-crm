@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '@/lib/env';
 
-const PUBLIC_PATHS = ['/login', '/recuperar-senha', '/auth', '/offline', '/manifest.webmanifest', '/sw.js'];
+const PUBLIC_PATHS = ['/api/keepalive', '/login', '/recuperar-senha', '/auth', '/offline', '/manifest.webmanifest', '/sw.js'];
 
 /** Renova a sessão a cada navegação e protege as rotas autenticadas. */
 export async function updateSession(request: NextRequest) {
